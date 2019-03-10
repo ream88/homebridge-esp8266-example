@@ -60,7 +60,7 @@ void handleRootRoute()
 {
   Serial.println("GET /");
 
-  server.send(200, "text/html", "I'm alive!");
+  server.send(200, "text/html", digitalRead(LED_BUILTIN) == LED_ON ? "on" : "off");
 }
 
 void handleOnRoute()
