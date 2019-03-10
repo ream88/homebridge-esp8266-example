@@ -50,7 +50,7 @@ void setupWebServer()
 
   server.begin();
 
-  Serial.print("Server started on http://");
+  Serial.print("Server running at http://");
   Serial.print(WiFi.localIP());
   Serial.print(":");
   Serial.println(SERVER_PORT);
@@ -58,17 +58,23 @@ void setupWebServer()
 
 void handleRootRoute()
 {
+  Serial.println("GET /");
+
   server.send(200, "text/html", "I'm alive!");
 }
 
 void handleOnRoute()
 {
+  Serial.println("POST /on");
+
   digitalWrite(LED_BUILTIN, LED_ON);
   server.send(204, "text/html", "");
 }
 
 void handleOffRoute()
 {
+  Serial.println("POST /off");
+
   digitalWrite(LED_BUILTIN, LED_OFF);
   server.send(204, "text/html", "");
 }
