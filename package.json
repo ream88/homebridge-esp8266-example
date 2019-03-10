@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "scripts": {
+    "start": "homebridge -U ./config -P ./homebridge-esp8266-plugin"
+  },
+  "dependencies": {
+    "homebridge": "^0.4.46"
+  }
+}

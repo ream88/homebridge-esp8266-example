@@ -1,0 +1,11 @@
+{
+  "name": "homebridge-esp8266-plugin",
+  "keywords": [
+    "homebridge-plugin"
+  ],
+  "engines": {
+    "node": ">=0.11.0",
+    "homebridge": ">=0.2.0"
+  },
+  "private": true
+}
