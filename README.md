@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://github.com/ream88/homebridge-esp8266-example/blob/master/logo.png" height="150">
+</p>
+
 # homebridge-esp8266-example
 
 This is an example for building custom HomeKit appliances using [Homebride](https://homebridge.io) and ESP8266-based microcontrollers.
@@ -22,4 +26,3 @@ curl -d off http://10.0.0.34
 ## [homebridge-esp8266-plugin](/homebridge-esp8266-plugin)
 
 The second component is a custom Homebridge plugin providing a simple switch accessory which allows you to toggle the LED via  the Home app on iOS/macOS or by using Siri on your Apple device including HomePod.
-
