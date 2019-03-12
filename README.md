@@ -4,7 +4,7 @@
 
 # homebridge-esp8266-example
 
-This is an example for building custom HomeKit appliances using [Homebride](https://homebridge.io) and ESP8266-based microcontrollers.
+This is an example for building custom HomeKit appliances using [Homebridge](https://homebridge.io) and ESP8266-based microcontrollers.
 
 ## [sketch](/sketch)
 
