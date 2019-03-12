@@ -26,3 +26,9 @@ curl -d off http://10.0.0.34
 ## [homebridge-esp8266-plugin](/homebridge-esp8266-plugin)
 
 The second component is a custom Homebridge plugin providing a simple switch accessory which allows you to toggle the LED via  the Home app on iOS/macOS or by using Siri on your Apple device including HomePod.
+
+## TODOs
+
+- [ ] Implement [bonjour](https://www.npmjs.com/package/bonjour) to get rid of fixed IPs.
+- [ ] Switch from a single accessary to a HomeKit platform with multiple ones.
+- [ ] Try out MQTT.
