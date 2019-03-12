@@ -12,10 +12,12 @@ class D1Mini {
       .on('get', this.getSwitchOnCharacteristic.bind(this))
       .on('set', this.setSwitchOnCharacteristic.bind(this))
 
+    this.log('< GET /')
     http
       .request({ method: 'GET', hostname: '10.0.0.34', path: '/' })
       .then((body) => {
-        this.switchService.getCharacteristic(Characteristic.On).setValue(body === 'on')
+        this.log(`> ${body}`)
+        this.switchService.getCharacteristic(Characteristic.On).updateValue(body === 'on')
       })
       .catch((error) => this.log.error(error.message))
   }
@@ -30,20 +32,26 @@ class D1Mini {
   }
 
   getSwitchOnCharacteristic (callback) {
-    this.log('getSwitchOnCharacteristic')
+    this.log('< GET /')
 
     http
-      .request({ method: 'GET', hostname: '10.0.0.34', path: '/' })
-      .then((body) => callback(null, body === 'on'))
+      .request({ method: 'GET', hostname: '10.0.0.34' })
+      .then((body) => {
+        this.log(`> ${body}`)
+        callback(null, body === 'on')
+      })
       .catch((error) => this.log.error(error.message))
   }
 
   setSwitchOnCharacteristic (value, callback) {
-    this.log('setSwitchOnCharacteristic', value)
+    this.log('< POST /', value ? 'on' : 'off')
 
     http
-      .request({ method: 'POST', hostname: '10.0.0.34', path: value ? '/on' : '/off' })
-      .then(() => callback())
+      .request({ method: 'POST', hostname: '10.0.0.34', body: value ? 'on' : 'off' })
+      .then((body) => {
+        this.log(`> ${body}`)
+        callback()
+      })
       .catch((error) => this.log.error(error.message))
   }
 }

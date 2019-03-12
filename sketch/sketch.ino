@@ -44,9 +44,8 @@ void setupWiFi()
 
 void setupWebServer()
 {
-  server.on("/", HTTP_GET, handleRootRoute);
-  server.on("/on", HTTP_POST, handleOnRoute);
-  server.on("/off", HTTP_POST, handleOffRoute);
+  server.on("/", HTTP_GET, handleGetRoute);
+  server.on("/", HTTP_POST, handlePostRoute);
 
   server.begin();
 
@@ -56,30 +55,41 @@ void setupWebServer()
   Serial.println(SERVER_PORT);
 }
 
-void handleRootRoute()
-{
-  Serial.println("GET /");
-
-  server.send(200, "text/html", digitalRead(LED_BUILTIN) == LED_ON ? "on" : "off");
-}
-
-void handleOnRoute()
-{
-  Serial.println("POST /on");
-
-  digitalWrite(LED_BUILTIN, LED_ON);
-  server.send(204, "text/html", "");
-}
-
-void handleOffRoute()
-{
-  Serial.println("POST /off");
-
-  digitalWrite(LED_BUILTIN, LED_OFF);
-  server.send(204, "text/html", "");
-}
-
 void loop()
 {
   server.handleClient();
+}
+
+String status()
+{
+  return digitalRead(LED_BUILTIN) == LED_ON ? "on" : "off";
+}
+
+void handleGetRoute()
+{
+  Serial.println("GET /");
+
+  server.send(200, "text/plain", status());
+}
+
+void handlePostRoute()
+{
+  Serial.println("POST /");
+
+  String body = server.arg("plain");
+
+  if (body == "on")
+  {
+    digitalWrite(LED_BUILTIN, LED_ON);
+    server.send(200, "text/plain", status());
+  }
+  else if (body == "off")
+  {
+    digitalWrite(LED_BUILTIN, LED_OFF);
+    server.send(200, "text/plain", status());
+  }
+  else
+  {
+    server.send(400, "text/plain", status());
+  }
 }
