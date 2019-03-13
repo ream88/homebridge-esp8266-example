@@ -31,7 +31,7 @@ This is a custom Homebridge plugin providing a simple switch accessory which all
 
 ### Usage
 
-Nothing to special here, just install the dependencies and start Homebridge:
+Nothing special here if you're used to Homebridge, just install the dependencies and start Homebridge:
 
 ```
 npm install
