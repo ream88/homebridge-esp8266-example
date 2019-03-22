@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/ream88/homebridge-esp8266-example/blob/master/logo.png" width="382" height="150">
+  <img src="https://github.com/ream88/homebridge-esp8266-example/blob/master/logo.png" width="382" />
 </p>
 
 # homebridge-esp8266-example
