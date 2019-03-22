@@ -1,5 +1,7 @@
-#include <ESP8266WiFi.h>
+#include <ESP8266mDNS.h>
 #include <ESP8266WebServer.h>
+#include <ESP8266WiFi.h>
+
 #include "./config.h"
 
 // https://forum.arduino.cc/index.php?topic=399857.0
@@ -7,9 +9,13 @@
 #define LED_OFF HIGH
 
 ESP8266WebServer server(SERVER_PORT);
+MDNSResponder mdns;
+
+char accessoryName[16] = {0};
 
 void setup()
 {
+  sprintf(accessoryName, "esp8266_%08X", ESP.getChipId());
   pinMode(LED_BUILTIN, OUTPUT);
 
   Serial.begin(115200);
@@ -21,12 +27,14 @@ void setup()
 
   setupWiFi();
   setupWebServer();
+  setupBonjour();
 }
 
 void setupWiFi()
 {
   // WiFi setup
   WiFi.mode(WIFI_STA);
+  WiFi.hostname(accessoryName);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
   Serial.print("Connecting to ");
@@ -55,9 +63,19 @@ void setupWebServer()
   Serial.println(SERVER_PORT);
 }
 
+void setupBonjour()
+{
+  if (mdns.begin(accessoryName, WiFi.localIP()))
+  {
+    Serial.println("MDNS responder started");
+  }
+  mdns.addService("led", "tcp", SERVER_PORT);
+}
+
 void loop()
 {
   server.handleClient();
+  mdns.update();
 }
 
 String status()
