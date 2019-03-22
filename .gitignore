@@ -1,3 +1,5 @@
 .vscode/
-sketch/config.h
+config/accessories
+config/persist
 node_modules/
+sketch/config.h
