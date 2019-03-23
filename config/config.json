@@ -5,9 +5,9 @@
     "port": 51826,
     "pin": "123-45-678"
   },
-  "accessories": [
+  "platforms": [
     {
-      "accessory": "esp8266",
+      "platform": "esp8266-switch",
       "name": "D1 Mini"
     }
   ]

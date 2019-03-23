@@ -41,5 +41,5 @@ npm start
 ## TODOs
 
 - [x] Implement [bonjour](https://www.npmjs.com/package/bonjour) to get rid of fixed IPs.
-- [ ] Switch from a single accessary to a HomeKit platform with multiple ones.
+- [x] Switch from a single accessory to a Homebridge platform with multiple ones.
 - [ ] Try out MQTT.

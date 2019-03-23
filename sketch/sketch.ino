@@ -69,7 +69,9 @@ void setupBonjour()
   {
     Serial.println("MDNS responder started");
   }
-  mdns.addService("led", "tcp", SERVER_PORT);
+  mdns.addService("homebridge", "tcp", SERVER_PORT);
+  mdns.addServiceTxt("homebridge", "tcp", "type", "esp8266-switch");
+  mdns.addServiceTxt("homebridge", "tcp", "mac", WiFi.macAddress());
 }
 
 void loop()
