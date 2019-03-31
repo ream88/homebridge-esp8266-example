@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "start": "homebridge -U $PWD/config -P $PWD/homebridge-esp8266-plugin",
-    "reset": "rimraf config/accessories; rimraf config/persit"
+    "reset": "rimraf config/accessories; rimraf config/persist"
   },
   "dependencies": {
     "bonjour": "^3.5.0",
