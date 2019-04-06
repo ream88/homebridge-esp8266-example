@@ -80,36 +80,48 @@ void loop()
   mdns.update();
 }
 
-String status()
-{
-  return digitalRead(LED_BUILTIN) == LED_ON ? "on" : "off";
-}
-
 void handleGetRoute()
 {
   Serial.println("GET /");
 
-  server.send(200, "text/plain", status());
+  server.send(200, "text/html", website());
 }
 
 void handlePostRoute()
 {
   Serial.println("POST /");
 
-  String body = server.arg("plain");
+  String body = server.hasArg("data") ? server.arg("data") : server.arg("plain");
 
   if (body == "on")
   {
     digitalWrite(LED_BUILTIN, LED_ON);
-    server.send(200, "text/plain", status());
+    server.send(200, "text/html", website());
   }
   else if (body == "off")
   {
     digitalWrite(LED_BUILTIN, LED_OFF);
-    server.send(200, "text/plain", status());
+    server.send(200, "text/html", website());
   }
   else
   {
-    server.send(400, "text/plain", status());
+    server.send(400, "text/html", website());
   }
+}
+
+String status()
+{
+  return digitalRead(LED_BUILTIN) == LED_ON ? "on" : "off";
+}
+
+String website()
+{
+  String value = status() == "on" ? "off" : "on";
+  String form = "<form action=\"/\" method=\"post\">"
+                "<button name=\"data\" value=\"" +
+                value +
+                "\">toggle</button>"
+                "</form>";
+
+  return status() + "<br />" + form;
 }
