@@ -38,7 +38,7 @@ obtaining an IP the HTTP API should be ready and accepting your requests.
 ## [homebridge-esp8266-plugin](/homebridge-esp8266-plugin)
 
 This is a custom Homebridge plugin providing a simple switch accessory which
-allows you to toggle the LED via  the Home app on iOS/macOS or by using Siri on
+allows you to toggle the LED via the Home app on iOS/macOS or by using Siri on
 your Apple device including HomePod.
 
 ### Usage
