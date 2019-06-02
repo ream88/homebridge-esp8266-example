@@ -64,10 +64,10 @@ class D1MiniSwitch {
     this.config = config
 
     accessory
-    .getService(Service.AccessoryInformation)
-    .setCharacteristic(Characteristic.Manufacturer, 'Mario Uher')
-    .setCharacteristic(Characteristic.Model, 'esp8266')
-    .setCharacteristic(Characteristic.SerialNumber, config.serial)
+      .getService(Service.AccessoryInformation)
+      .setCharacteristic(Characteristic.Manufacturer, 'Mario Uher')
+      .setCharacteristic(Characteristic.Model, 'esp8266')
+      .setCharacteristic(Characteristic.SerialNumber, config.serial)
 
     if (!accessory.getService(Service.Switch)) {
       accessory.addService(Service.Switch, config.name)
