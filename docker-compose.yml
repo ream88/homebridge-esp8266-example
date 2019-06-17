@@ -5,6 +5,12 @@ services:
     build: ./avahi
     network_mode: host
 
+  homebridge:
+    build: ./homebridge
+    network_mode: host
+    volumes:
+      - ./homebridge/config:/home/config
+
   mqtt:
     image: eclipse-mosquitto
     command: ["/usr/sbin/mosquitto", "-v", "-c", "/mosquitto/config/mosquitto.conf"]

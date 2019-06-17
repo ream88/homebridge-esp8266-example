@@ -1,5 +1,5 @@
 .vscode/
-config/accessories
-config/persist
-node_modules/
+homebridge/config/accessories
+homebridge/config/persist
+homebridge/node_modules/
 sketch/config.h
