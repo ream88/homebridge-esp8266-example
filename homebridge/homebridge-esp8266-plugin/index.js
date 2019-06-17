@@ -21,10 +21,19 @@ class ESP8266Switch {
       .getCharacteristic(Characteristic.On)
       .on('set', this.setOnCharacteristic.bind(this))
 
-    bonjour.findOne({ type: 'mqtt' }, ({ protocol, host, port }) => {
-      this.log.info(`MQTT broker found at ${protocol}://${host}:${port}`)
+    bonjour.findOne({ type: 'mqtt' }, ({ protocol, addresses, port }) => {
+      this.log.info(`MQTT broker found at ${protocol}://${addresses[1]}:${port}`)
 
-      this.mqtt = MQTT.connect(`${protocol}://${host}:${port}`)
+      this.mqtt = MQTT.connect(`${protocol}://${addresses[1]}:${port}`)
+
+      this.mqtt.on('offline', () => {
+        this.log.warn('MQTT offline!')
+      })
+
+      this.mqtt.on('error', (error) => {
+        this.log.error(`MQTT error: ${error}!`)
+      })
+
       this.mqtt.subscribe(MQTT_TOPIC_STATUS).then(() => {
         this.log.info(`Subscribed to ${MQTT_TOPIC_STATUS}`)
 
@@ -52,7 +61,7 @@ class ESP8266Switch {
 
   setOnCharacteristic (value, callback) {
     this.mqtt.publish(MQTT_TOPIC_ACTION, value ? 'on' : 'off').then(() => {
-      this.log.info(`< [${MQTT_TOPIC_ACTION}]: "${value ? 'on' : 'off'}"`)
+      this.log.info(`> [${MQTT_TOPIC_ACTION}]: "${value ? 'on' : 'off'}"`)
       callback()
     })
   }
