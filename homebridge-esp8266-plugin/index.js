@@ -1,114 +1,51 @@
-const { Characteristic, Service, uuid: UUID } = require('hap-nodejs')
-const { PlatformAccessory } = require('homebridge/lib/platformAccessory')
-const bonjour = require('bonjour')
-const http = require('./http')
-const mdnsResolver = require('mdns-resolver')
+const { Characteristic, Service } = require('hap-nodejs')
+const bonjour = require('bonjour')()
+const MQTT = require('async-mqtt')
 
-const PLUGIN_NAME = 'homebridge-esp8266-plugin'
+const MQTT_TOPIC_ACTION = 'esp8266/led/action'
+const MQTT_TOPIC_STATUS = 'esp8266/led/status'
 const PLATFORM_NAME = 'esp8266-switch'
+const PLUGIN_NAME = 'homebridge-esp8266-plugin'
 
-class D1MiniSwitchPlatform {
-  constructor (log, config, api) {
+module.exports = (homebridge) => {
+  homebridge.registerAccessory(PLUGIN_NAME, PLATFORM_NAME, ESP8266Switch)
+}
+
+class ESP8266Switch {
+  constructor (log, config) {
     this.log = log
     this.config = config
-    this.api = api
-    this.accessories = {}
-    this.bonjour = bonjour().find({ type: 'homebridge' })
 
-    this.api.on('didFinishLaunching', () => {
-      this.bonjour.on('up', (service) => {
-        this.foundAccessory(service)
+    this.service = new Service.Switch(this.config['name'])
+    this.service
+      .getCharacteristic(Characteristic.On)
+      .on('set', this.setOnCharacteristic.bind(this))
+
+    bonjour.findOne({ type: 'mqtt' }, ({ protocol, host, port }) => {
+      this.mqtt = MQTT.connect(`${protocol}://${host}:${port}`)
+      this.mqtt.subscribe(MQTT_TOPIC_STATUS).then(() => {
+        this.mqtt.on('message', (topic, msg) => {
+          if (topic === MQTT_TOPIC_STATUS) {
+            this.service
+              .getCharacteristic(Characteristic.On)
+              .updateValue(msg.toString() === 'on')
+          }
+        })
       })
     })
   }
 
-  // Function invoked when homebridge tries to restore cached accessory
-  configureAccessory (accessory) {
-    this.log('Restore cached accessory')
-    this.accessories[accessory.UUID] = accessory
-  }
-
-  async foundAccessory (service) {
-    if (service.txt.type && service.txt.type === PLATFORM_NAME) {
-      const uuid = UUID.generate(service.txt.mac)
-      const host = await mdnsResolver.resolve4(service.host)
-      const accessoryConfig = { host: host, port: service.port, name: service.name, serial: service.txt.mac }
-
-      if (this.accessories[uuid]) {
-        this.log(`Found existing esp8266-switch on ${host}:${service.port}`)
-
-        this.startAccessory(this.accessories[uuid], accessoryConfig)
-      } else {
-        this.log(`Found new esp8266-switch on ${host}:${service.port}`)
-
-        this.accessories[uuid] = new PlatformAccessory(PLATFORM_NAME, uuid)
-        this.startAccessory(this.accessories[uuid], accessoryConfig)
-        this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [this.accessories[uuid]])
-      }
-    }
-  }
-
-  startAccessory (accessory, config) {
-    this.log('Start accessory')
-    new D1MiniSwitch(accessory, this.log, config)
-  }
-}
-
-module.exports = (homebridge) => {
-  homebridge.registerPlatform(PLUGIN_NAME, PLATFORM_NAME, D1MiniSwitchPlatform, true)
-}
-
-class D1MiniSwitch {
-  constructor (accessory, log, config) {
-    this.log = log
-    this.config = config
-
-    accessory
-      .getService(Service.AccessoryInformation)
+  // @implements {homebridge/lib/server.js}
+  getServices () {
+    const info = new Service.AccessoryInformation()
       .setCharacteristic(Characteristic.Manufacturer, 'Mario Uher')
-      .setCharacteristic(Characteristic.Model, 'esp8266')
-      .setCharacteristic(Characteristic.SerialNumber, config.serial)
+      .setCharacteristic(Characteristic.Model, 'LOLIN D1 mini')
 
-    if (!accessory.getService(Service.Switch)) {
-      accessory.addService(Service.Switch, config.name)
-    }
-    accessory
-      .getService(Service.Switch)
-      .getCharacteristic(Characteristic.On)
-      .on('get', this.getSwitchOnCharacteristic.bind(this))
-      .on('set', this.setSwitchOnCharacteristic.bind(this))
-
-    this.log('< GET /')
-    http
-      .request({ method: 'GET', hostname: this.config.host, path: '/' })
-      .then((body) => {
-        this.log(`> ${body}`)
-        accessory.getService(Service.Switch).getCharacteristic(Characteristic.On).updateValue(body === 'on')
-      })
-      .catch((error) => this.log.error(error.message))
+    return [info, this.service]
   }
 
-  getSwitchOnCharacteristic (callback) {
-    this.log('< GET /')
-
-    http
-      .request({ method: 'GET', hostname: this.config.host })
-      .then((body) => {
-        this.log(`> ${body}`)
-        callback(null, body === 'on')
-      })
-      .catch((error) => this.log.error(error.message))
-  }
-
-  setSwitchOnCharacteristic (value, callback) {
-    this.log('< POST /', value ? 'on' : 'off')
-
-    http
-      .request({ method: 'POST', hostname: this.config.host, body: value ? 'on' : 'off' })
-      .then((body) => {
-        this.log(`> ${body}`)
-        callback()
-      })
-      .catch((error) => this.log.error(error.message))
+  setOnCharacteristic (value, callback) {
+    this.mqtt.publish(MQTT_TOPIC_ACTION, value ? 'on' : 'off')
+    callback()
   }
 }

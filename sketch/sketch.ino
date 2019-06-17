@@ -69,7 +69,7 @@ void setupMDNS()
     Serial.println("MDNS responder started");
   }
 
-  int mqttServices = MDNS.queryService("homebridge", "tcp");
+  int mqttServices = MDNS.queryService("mqtt", "tcp");
   if (mqttServices == 0)
   {
     Serial.println("No MQTT broker found!");

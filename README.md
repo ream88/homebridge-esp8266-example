@@ -6,13 +6,14 @@
 
 This is an example for building custom HomeKit appliances using
 [Homebridge](https://homebridge.io) and ESP8266-based micro-controllers. It uses
-[dns-sd](http://www.dns-sd.org) for service discovery and MQTT for communication
-between the Homebridge plugin and the ESP8266 micro-controller(s).
+[DNS-SD](http://www.dns-sd.org)/Bonjour/Zeroconf for service discovery and
+[MQTT](http://mqtt.org) for communication between the Homebridge plugin and the
+ESP8266 based micro-controller(s).
 
 ## [sketch](/sketch)
 
-This is an Arduino sketch for any ESP8266-based micro-controller which allows the
-built-in LED to be toggled on and off via MQTT:
+This is an Arduino sketch for any ESP8266-based micro-controller which allows
+the built-in LED to be toggled on and off via MQTT:
 
 ```
 mosquitto_sub -t esp8266/led/status
@@ -42,12 +43,15 @@ your Apple device including HomePod.
 
 ### Usage
 
-Nothing special here if you're used to Homebridge, just install the dependencies
-and start Homebridge:
+Be sure to have [Docker](https://www.docker.com) and [Docker Compose](https://docs.docker.com/compose/) installed and running on your host, in my case a Raspberry Pi Zero W.
+The included [docker-compose.yml](/docker-compose.yml) defines all the required services to get started, including
+
+  - [Eclipse Mosquitto](https://mosquitto.org), a MQTT broker.
+  - [Avahi](http://avahi.org), a DNS-SD/Bonjour/Zeroconf service, which helps discovering the MQTT broker inside your network without fiddleing with IP addresses.
+  - [Homebride](https://homebridge.io), the actual Homebridge.
 
 ```
-npm install
-npm start
+docker-compose up
 ```
 
 # Links

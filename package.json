@@ -5,9 +5,9 @@
     "reset": "rimraf config/accessories; rimraf config/persist"
   },
   "dependencies": {
+    "async-mqtt": "^2.3.0",
     "bonjour": "^3.5.0",
-    "homebridge": "^0.4.46",
-    "mdns-resolver": "0.0.3"
+    "homebridge": "^0.4.46"
   },
   "devDependencies": {
     "rimraf": "^2.6.3"
