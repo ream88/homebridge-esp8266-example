@@ -7,5 +7,6 @@ services:
 
   mqtt:
     image: eclipse-mosquitto
+    command: ["/usr/sbin/mosquitto", "-v", "-c", "/mosquitto/config/mosquitto.conf"]
     ports:
       - "1883:1883"
