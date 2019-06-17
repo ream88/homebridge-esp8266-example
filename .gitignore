@@ -1,5 +1,7 @@
 .vscode/
-homebridge/config/accessories
-homebridge/config/persist
+homebridge/config/accessories/*
+homebridge/config/persist/*
 homebridge/node_modules/
 sketch/config.h
+
+!.gitkeep
