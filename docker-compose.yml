@@ -1,21 +1,25 @@
 version: "3.0"
 
 services:
-  avahi:
-    build: ./avahi
-    network_mode: host
-    restart: always
-
-  homebridge:
-    build: ./homebridge
-    network_mode: host
-    restart: always
-    volumes:
-      - ./homebridge/config:/home/config
-
   mqtt:
     image: eclipse-mosquitto
     command: ["/usr/sbin/mosquitto", "-v", "-c", "/mosquitto/config/mosquitto.conf"]
     restart: always
     ports:
       - "1883:1883"
+
+  avahi:
+    depends_on:
+      - mqtt
+    build: ./avahi
+    network_mode: host
+    restart: always
+
+  homebridge:
+    depends_on:
+      - avahi
+    build: ./homebridge
+    network_mode: host
+    restart: always
+    volumes:
+      - ./homebridge/config:/home/config
