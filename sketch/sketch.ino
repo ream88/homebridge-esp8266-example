@@ -35,6 +35,7 @@ void setup()
   setupWiFi();
   setupMDNS();
   setupMQTT();
+  blink(2);
 }
 
 void setupWiFi()
@@ -84,6 +85,18 @@ void setupMQTT()
 {
   mqtt.setServer(MDNS.IP(0), 1883);
   mqtt.setCallback(callback);
+}
+
+void blink(int count)
+{
+  for (int i = 0; i < count; i++)
+  {
+    digitalWrite(LED_BUILTIN, LED_OFF);
+    delay(150);
+    digitalWrite(LED_BUILTIN, LED_ON);
+    delay(150);
+    digitalWrite(LED_BUILTIN, LED_OFF);
+  }
 }
 
 void connectMQTT()
