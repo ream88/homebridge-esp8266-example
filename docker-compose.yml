@@ -4,15 +4,18 @@ services:
   avahi:
     build: ./avahi
     network_mode: host
+    restart: always
 
   homebridge:
     build: ./homebridge
     network_mode: host
+    restart: always
     volumes:
       - ./homebridge/config:/home/config
 
   mqtt:
     image: eclipse-mosquitto
     command: ["/usr/sbin/mosquitto", "-v", "-c", "/mosquitto/config/mosquitto.conf"]
+    restart: always
     ports:
       - "1883:1883"
