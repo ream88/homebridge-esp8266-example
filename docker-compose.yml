@@ -1,0 +1,11 @@
+version: "3.0"
+
+services:
+  avahi:
+    build: ./avahi
+    network_mode: host
+
+  mqtt:
+    image: eclipse-mosquitto
+    ports:
+      - "1883:1883"
