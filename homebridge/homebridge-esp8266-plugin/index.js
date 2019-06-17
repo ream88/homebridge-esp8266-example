@@ -22,9 +22,15 @@ class ESP8266Switch {
       .on('set', this.setOnCharacteristic.bind(this))
 
     bonjour.findOne({ type: 'mqtt' }, ({ protocol, host, port }) => {
+      this.log.info(`MQTT broker found at ${protocol}://${host}:${port}`)
+
       this.mqtt = MQTT.connect(`${protocol}://${host}:${port}`)
       this.mqtt.subscribe(MQTT_TOPIC_STATUS).then(() => {
+        this.log.info(`Subscribed to ${MQTT_TOPIC_STATUS}`)
+
         this.mqtt.on('message', (topic, msg) => {
+          this.log.info(`< [${topic}]: "${msg.toString()}"`)
+
           if (topic === MQTT_TOPIC_STATUS) {
             this.service
               .getCharacteristic(Characteristic.On)
@@ -45,7 +51,9 @@ class ESP8266Switch {
   }
 
   setOnCharacteristic (value, callback) {
-    this.mqtt.publish(MQTT_TOPIC_ACTION, value ? 'on' : 'off')
-    callback()
+    this.mqtt.publish(MQTT_TOPIC_ACTION, value ? 'on' : 'off').then(() => {
+      this.log.info(`< [${MQTT_TOPIC_ACTION}]: "${value ? 'on' : 'off'}"`)
+      callback()
+    })
   }
 }
