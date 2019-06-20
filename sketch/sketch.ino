@@ -32,13 +32,10 @@ void setup()
   }
   Serial.println();
 
-  setupWiFi();
-  setupMDNS();
-  setupMQTT();
-  blink(2);
+  setupWiFi() && setupMDNS() && setupMQTT() && blink(2);
 }
 
-void setupWiFi()
+bool setupWiFi()
 {
   WiFi.mode(WIFI_STA);
   WiFi.hostname(accessoryName);
@@ -60,9 +57,11 @@ void setupWiFi()
   Serial.print("accessoryName: ");
   Serial.print(accessoryName);
   Serial.println(".local");
+
+  return true;
 }
 
-void setupMDNS()
+bool setupMDNS()
 {
   if (MDNS.begin(accessoryName, WiFi.localIP()))
   {
@@ -73,21 +72,24 @@ void setupMDNS()
   if (mqttServices == 0)
   {
     Serial.println("No MQTT broker found!");
+    return false;
   }
   else
   {
     Serial.print("MQTT broker found at ");
     Serial.println(MDNS.IP(0));
+    return true;
   }
 }
 
-void setupMQTT()
+bool setupMQTT()
 {
   mqtt.setServer(MDNS.IP(0), 1883);
   mqtt.setCallback(callback);
+  return true;
 }
 
-void blink(int count)
+bool blink(int count)
 {
   for (int i = 0; i < count; i++)
   {
@@ -97,6 +99,8 @@ void blink(int count)
     delay(150);
     digitalWrite(LED_BUILTIN, LED_OFF);
   }
+
+  return count > 0;
 }
 
 void connectMQTT()
